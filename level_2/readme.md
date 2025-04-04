@@ -142,3 +142,7 @@ Now we can repeat the exact same steps we did before to extract the raw shellcod
 Firstly, if you run objdump on it you'll notice we have no 00 in the opcodes. 
 
 Extracting the shellcode and placing it into the tester c code, compiling and running you'll notice we now have a length of 29 bytes, which if you count it out is the correct amount. We're now ready to put this into an exploit and run it. 
+
+## Step 7 - Crafting an Exploit
+
+Coming soon!
