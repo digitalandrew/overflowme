@@ -37,7 +37,7 @@ You're now ready to get started. Each directory contains all the details for eac
 ### Level 1 - Stack Overflow Basics
 Learn the basics of stack overflows such as the layout of the call stack, how the caller's basepointer and return address are preserved onto the stack and finally how to perform a basic stack overflow exploit to take control of the instruction pointer and control program flow. 
 
-### Level 2 - Smashing the Stack (Coming Soon!)
+### Level 2 - Smashing the Stack
 Learn about the tried and trusted stack smashing attack where the shellcode is written into the buffer on the stack and then executed.
 
 ### Level 3 - Return Oriented Programming (Coming Soon!)
