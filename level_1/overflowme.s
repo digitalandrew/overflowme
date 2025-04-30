@@ -25,7 +25,7 @@ hidden_print:
 	# code to echo out message
     mov rax, 0x01			                    # 0x01 is write syscall
 	mov rdi, 1				                    # setting fd to STDOUT (1)
-	mov rdx, hidden_length						# length of string input is returned from read syscall into rax, moving it into rdx
+	mov rdx, hidden_length						# length of string to print
 	lea rsi, hidden_message[rip]	            # pointer to start of message to print
 	syscall
 	# function epilogue
@@ -75,7 +75,7 @@ main:
     mov rax, 0x01			                    # 0x01 is write syscall
 	mov rdi, 1				                    # setting fd to STDOUT (1)
 	lea rsi, intro_message[rip]	                # pointer to start of message to print
-	mov rdx, intro_length			            # length fo string to print
+	mov rdx, intro_length			            # length of string to print
 	syscall
 	before_function_call:						# label to set breakpoint before the function call
 	call echo_print
@@ -84,7 +84,7 @@ main:
     mov rax, 0x01			                    # 0x01 is write syscall
 	mov rdi, 1				                    # setting fd to STDOUT (1)
 	lea rsi, outro_message[rip]	                # pointer to start of message to print
-	mov rdx, outro_length			            # length fo string to print
+	mov rdx, outro_length			            # length of string to print
 	syscall
 	mov	eax, 0									# return 0 for no error
 	# function epilogue
