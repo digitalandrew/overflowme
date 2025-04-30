@@ -37,7 +37,7 @@ The first step is to start with assembly code and write a bare minimum program t
 Here are the steps we'll need to take to write this basic program:
 
 1. Push the string we want to print onto the stack in reverse order (we need everything to be self contained so we can't use a data section in our assembly)
-2. Set RAX to the syscall number, which for read is 1
+2. Set RAX to the syscall number, which for write is 1
 3. Set RDI to the file descriptor number for stdout which is also 1
 4. Set RSI to point to the start of the string, which for us conveniently starting at the stack pointer
 5. Set RDX to the length of the string to print (which is 8)
@@ -145,4 +145,74 @@ Extracting the shellcode and placing it into the tester c code, compiling and ru
 
 ## Step 7 - Crafting an Exploit
 
+Now that we have our shellcode working properly we need to craft an exploit to package it up as an input to the overflowme program which we've identified is vulnerable to a stack overflow. 
+
+Similar to in the previous level we'll need to fill up the stack to overwrite into the return address with an address we control. This time though instead of filling the stack completely with with "A"s we'll need to insert our shellcode and then be able to find the start of that shell code in the stack so we can fill the return address with that address and jump to it. 
+
+Let's start by simply running the program as intended in GDB
+
+```bash
+gdb ./overflowme
+```
+
+Then, let's set up one breakpoint to catch the code before it returns from the function call:
+
+`b before_function_return`
+
+Now we can run the program with `r` and it should automatically stop when we are prompted with an input, put anything here you'd like, there is no need to overflow it. Next continue with `c` and you should now be halted at the breakpoint before the function call. 
+
+Now let's take a look at the stack layout with:
+
+`x/66xg $rsp`
+
+This displays the 66 quad-words in hex format starting from the stack pointer upwards. Now we can get an idea of where the stack is, for me 0x7fffffffda20 is pretty close to the middle of it. We can start with this as our return address. 
+
+Now that we have an idea of where we want to land let's start crafting our exploit. 
+
+Previously we just filled the stack completely with "A"s to overwrite all the way into the basepointer and then our return address at the end to be overwritten into the return address, this time we need our shellcode in the stack. For our shellcode to work properly we need to land perfectly at the start of it, this creates somewhat of a needle in the haystack scenario. To get around this we'll employ what's called a NOP sled. The NOP instruction stands for No Operation and tells the processor to do nothing and move onto the next instruction. If we place all NOPs before our shellcode then as long as we land somewhere in the NOPs it will continue on doing "nothing" until it hits the first line of our shellcode. 
+
+We'll still want some padding between our exploit code and the stack though so that it doesn't get peeled away by the function epilogue when it pops of what should be the preserved callers basepointer. Because of that we'll want our exploit to look something like: 
+
+NOPs + Shellcode + Padding + Return Address
+
+Recall that we need the exploit string to be 520 bytes long to fill up the stack and properly write the return address.
+
+We can work backwards from this as we know the length of our shellcode and the return address. Next I usually start with a padding size that's roughly 1/4 of our whole string, I went with 128 bytes, which means the remaining bytes can all be NOPs. 
+
+Let's create a our exploit string now:
+
+```bash
+python3 exploit.py > exploit
+```
+
+Now let's head back over to gdb and run through this with the exploit passed in.
+
+```bash
+gdb ./overflowme
+```
+
+Again set up a breakpoint to catch the code before it returns from the function call:
+
+`b before_function_return`
+
+Now run it and pass the exploit into stdin
+
+`r < exploit`
+
+Once it hits the breakpoint, let's reinvestigate the layout of the stack with:
+
+`x/66xg $rsp`
+
+You should see at the bottom of the stack the return address we added, then moving up stack next the padding which is all A or (41 in its ascii representation), then the exploit shell code and then finally the nop sled (x90 is NOP in x86-64). If we've got everything right then the return address we added should be pointing to somewhere in the nopsled. 
+
+Next you can continue execution of the program with `c` and if all worked as it should you should see TCMRULEZ printed out before it crashes with a segfault. Again we get a segfault after because our shellcode doesn't either properly exit the program or return to a valid piece of code. Congrats you've got a working exploit that uses your custom shellcode!
+
+## Extra Challenge
+
+If you want an extra challenge, instad of having your shellcode print out a string, instead write it to give you a shell. This could simulate an exploit that could be used for local privilege escalation if for example the overflowme binary had the SUID bit set (which you can set if you want to fully see how'd you end up as roo). 
+
+If you want a hint check out this table of Linux syscalls [https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/](here) and pay attention to syscall 59 execve. 
+
+Good luck and see you in the next level where we add back in non-executable stack protection (NX) and then bypass it with return oriented programming. 
+=======
 Coming soon!
