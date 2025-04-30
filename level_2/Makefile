@@ -2,7 +2,7 @@ overflowme.o: overflowme.s
 	as -g -o overflowme.o overflowme.s
 
 overflowme: overflowme.o
-	gcc -o overflowme overflowme.o
+	gcc -z execstack -o overflowme overflowme.o
 	rm -f overflowme.o
 
 print_shellcode.o: print_shellcode.s
