@@ -37,7 +37,7 @@ The first step is to start with assembly code and write a bare minimum program t
 Here are the steps we'll need to take to write this basic program:
 
 1. Push the string we want to print onto the stack in reverse order (we need everything to be self contained so we can't use a data section in our assembly)
-2. Set RAX to the syscall number, which for read is 1
+2. Set RAX to the syscall number, which for write is 1
 3. Set RDI to the file descriptor number for stdout which is also 1
 4. Set RSI to point to the start of the string, which for us conveniently starting at the stack pointer
 5. Set RDX to the length of the string to print (which is 8)
