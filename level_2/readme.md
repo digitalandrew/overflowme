@@ -209,7 +209,8 @@ You should see at the bottom of the stack the return address we added, then movi
   <img
     src="https://github.com/user-attachments/assets/7a351719-6b83-40e2-a6c9-a1b77c0706d7"
     alt="stack after exploit"
-    width="215"
+    width="400"
+    style="height: auto;" 
   />
 </p>
 
