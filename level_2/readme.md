@@ -205,6 +205,9 @@ Once it hits the breakpoint, let's reinvestigate the layout of the stack with:
 
 You should see at the bottom of the stack the return address we added, then moving up stack next the padding which is all A or (41 in its ascii representation), then the exploit shell code and then finally the nop sled (x90 is NOP in x86-64). If we've got everything right then the return address we added should be pointing to somewhere in the nopsled. 
 
+<img width="215" alt="stack after exploit" src="https://github.com/user-attachments/assets/7a351719-6b83-40e2-a6c9-a1b77c0706d7" />
+
+
 Next you can continue execution of the program with `c` and if all worked as it should you should see TCMRULEZ printed out before it crashes with a segfault. Again we get a segfault after because our shellcode doesn't either properly exit the program or return to a valid piece of code. Congrats you've got a working exploit that uses your custom shellcode!
 
 ## Extra Challenge
