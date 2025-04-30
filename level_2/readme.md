@@ -214,5 +214,3 @@ If you want an extra challenge, instad of having your shellcode print out a stri
 If you want a hint check out this table of Linux syscalls [https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/](here) and pay attention to syscall 59 execve. 
 
 Good luck and see you in the next level where we add back in non-executable stack protection (NX) and then bypass it with return oriented programming. 
-=======
-Coming soon!
